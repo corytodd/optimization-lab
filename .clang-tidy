@@ -20,7 +20,8 @@ Checks: >
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -readability-magic-numbers,
   -portability-avoid-pragma-once,
-  -performance-enum-size
+  -performance-enum-size,
+  -readability-identifier-length
 
 WarningsAsErrors: "*"
 HeaderFilterRegex: ".*/include/.*"
