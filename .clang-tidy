@@ -1,0 +1,27 @@
+---
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  cert-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -modernize-*,
+  -cppcoreguidelines-*,
+  -google-*,
+  -hicpp-*,
+  -fuchsia-*,
+  -llvm-*,
+  -llvmlibc-*,
+  -altera-*,
+  -android-*,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -readability-magic-numbers,
+  -portability-avoid-pragma-once,
+  -performance-enum-size
+
+WarningsAsErrors: "*"
+HeaderFilterRegex: ".*/include/.*"
+FormatStyle: file
