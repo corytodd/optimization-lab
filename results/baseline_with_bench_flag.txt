@@ -1,0 +1,44 @@
+## environment
+date:     2026-06-13T19:22:16Z
+os:       Linux 7.0.11-1-cachyos
+cpu:      12th Gen Intel(R) Core(TM) i7-1255U
+cores:    0-3
+compiler: clang version 22.1.6
+governor: performance
+command:  ./build/cmd/rot13-cli -f data/data_1GB.txt
+
+# started on Sat Jun 13 12:19:56 2026
+
+
+ Performance counter stats for './build/cmd/rot13-cli -f data/data_1GB.txt':
+
+     <not counted>      cpu_atom/cycles/u                                                       (0.00%)
+     7,569,636,828      cpu_core/cycles/u                                                       (82.48%)
+     <not counted>      cpu_atom/instructions/u                                                 (0.00%)
+    28,257,435,427      cpu_core/instructions/u                                                 (91.19%)
+        13,303,222      cpu_core/mem_load_retired.l1_miss/u                                        (91.03%)
+         8,980,553      cpu_core/mem_load_retired.l2_miss/u                                        (90.73%)
+         8,664,096      cpu_core/mem_load_retired.l3_miss/u                                        (90.68%)
+     <not counted>      cpu_atom/dtlb-load-misses/u                                             (0.00%)
+               587      cpu_core/dtlb-load-misses/u                                             (90.91%)
+     <not counted>      cpu_atom/dtlb-loads/u                                                   (0.00%)
+     1,703,211,066      cpu_core/dtlb-loads/u                                                   (36.65%)
+               988      page-faults:u                                                         
+     <not counted>      cpu_atom/branches/u                                                     (0.00%)
+        70,418,015      cpu_core/branches/u                                                     (45.61%)
+     <not counted>      cpu_atom/branch-misses/u                                                (0.00%)
+               490      cpu_core/branch-misses/u                                                (55.01%)
+     <not counted>      cpu_atom/uops_issued.any/u                                              (0.00%)
+    28,141,714,738      cpu_core/uops_issued.any/u                                              (63.99%)
+    27,994,973,114      cpu_core/uops_retired.slots/u                                           (73.51%)
+   <not supported>      cpu_atom/stalled-cycles-frontend/u                                      
+   <not supported>      cpu_core/stalled-cycles-frontend/u                                      
+   <not supported>      cpu_atom/stalled-cycles-backend/u                                      
+   <not supported>      cpu_core/stalled-cycles-backend/u                                      
+
+     139.055020198 seconds time elapsed
+
+       1.922422000 seconds user
+       6.648657000 seconds sys
+
+
