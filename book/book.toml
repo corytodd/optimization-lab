@@ -1,0 +1,12 @@
+[book]
+title = "Optimization Lab"
+authors = ["Cory Todd"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "html"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
