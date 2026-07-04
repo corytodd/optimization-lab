@@ -23,7 +23,7 @@ prevents the scheduler from migrating it mid-run. On a different machine the cor
 will differ; check `lscpu` and override with `TASKSET_CORES=<range>` if needed:
 
 ```bash
-TASKSET_CORES=0-7 ./tools/run-perf.sh ...
+TASKSET_CORES=0-3 ./tools/run-perf.sh ...
 ```
 
 > perf uses CPU-specific hardware counters. The events in `run-perf.sh` target Intel's PMU:
