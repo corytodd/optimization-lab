@@ -63,3 +63,7 @@ sys/devices/system/cpu/cpu*/cpufreq/base_frequency
 1200000
 1200000
 ```
+
+Remember to minimize system load while working through these exercises. If you
+see a deviation in your datapoint, stop and confirm your system assumptions before
+continuing.
