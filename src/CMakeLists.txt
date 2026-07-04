@@ -3,6 +3,8 @@ set(LIB rot13)
 set(SOURCES
     rot13_registry.c
     rot13_scalar.c
+    rot13_lut.c
+    rot13_table.c
 )
 
 add_library(${LIB} ${SOURCES})
