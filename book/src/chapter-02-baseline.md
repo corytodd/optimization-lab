@@ -156,10 +156,11 @@ for (int i = 0; i < (int)len; ++i)
 }
 ```
 
-**We see `sys` time at 0.297 s (14% of elapsed)**, so this means `read()` syscalls are a
-secondary but real cost; the file is being copied from the kernel's page cache into our
-`malloc` buffer. Replacing `fread` with `mmap` eliminates that copy. Whether it moves the
-needle enough to matter depends on how much we close the gap on the compute side first.
+**We see `sys` time at 0.297 s (14% of elapsed)**, this means `read()` syscalls are contributing
+to the execution time. The file is being copied from the kernel's page cache into our `malloc`
+buffer. One prescription for this would be to replace `fread` with `mmap`. This eliminates the
+copy from the input file to the process input. This only works because we're reading from a file.
+If `stdin` were instead the source, this would be a less meaningful change.
 
 [tlb]: https://en.wikipedia.org/wiki/Translation_lookaside_buffer
 [cmov]: https://www.felixcloutier.com/x86/cmovcc
