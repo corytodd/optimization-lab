@@ -144,6 +144,18 @@ is to add software prefetch hints (`__builtin_prefetch`). That would be wasted e
 the prefetcher is already doing its job. Verifying this before reaching for prefetch hints is
 exactly the point of reading the counters first.
 
+```c
+for (int i = 0; i < (int)len; ++i)
+{
+    // no value in this case: the hardware prefetcher already handles sequential access.
+    // Adding this hint buys nothing and adds an instruction to every iteration
+    __builtin_prefetch(&input[i + 64], 0, 0);
+
+    int byte = (input[i] & 0xFF);
+    // ...
+}
+```
+
 **We see `sys` time at 0.297 s (14% of elapsed)**, so this means `read()` syscalls are a
 secondary but real cost; the file is being copied from the kernel's page cache into our
 `malloc` buffer. Replacing `fread` with `mmap` eliminates that copy. Whether it moves the
