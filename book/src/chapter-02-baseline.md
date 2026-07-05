@@ -165,25 +165,6 @@ needle enough to matter depends on how much we close the gap on the compute side
 [cmov]: https://www.felixcloutier.com/x86/cmovcc
 [pagefault]: https://en.wikipedia.org/wiki/Page_fault
 
-
-## CPU Affinity
-
-Both `run-perf.sh` and `flame.sh` pin the process to cores `0-3` via `taskset`. On this
-machine (i7-1255U) those are the two P-cores, which keeps the process off the E-cores and
-prevents the scheduler from migrating it mid-run. On a different machine the core numbering
-will differ; check `lscpu` and override with `TASKSET_CORES=<range>` if needed:
-
-```bash
-TASKSET_CORES=0-3 ./tools/run-perf.sh ...
-```
-
-> perf uses CPU-specific hardware counters. The events in `run-perf.sh` target Intel's PMU:
-> `mem_load_retired.*`, `uops_issued.any`, and `uops_retired.slots` are Intel names and will
-> not exist verbatim on AMD or ARM. If you see "event not found" errors, run `perf list` to
-> see what your CPU exposes and update the `EVENTS` variable in `run-perf.sh` accordingly.
-> `cycles`, `instructions`, `branches`, `branch-misses`, and `page-faults` are generic and
-> work everywhere.
-
 ## Stdout and Measurement Noise
 
 The binary writes its result to stdout, which adds cost that has nothing to do with the

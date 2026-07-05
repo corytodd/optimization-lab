@@ -64,6 +64,22 @@ sys/devices/system/cpu/cpu*/cpufreq/base_frequency
 1200000
 ```
 
+Both `run-perf.sh` and `flame.sh` pin the process to cores `0-3` via `taskset`. On this
+machine (i7-1255U) those are the two P-cores, which keeps the process off the E-cores and
+prevents the scheduler from migrating it mid-run. On a different machine the core numbering
+will differ; check `lscpu` and override with `TASKSET_CORES=<range>` if needed:
+
+```bash
+TASKSET_CORES=0-3 ./tools/run-perf.sh ...
+```
+
+> perf uses CPU-specific hardware counters. The events in `run-perf.sh` target Intel's PMU:
+> `mem_load_retired.*`, `uops_issued.any`, and `uops_retired.slots` are Intel names and will
+> not exist verbatim on AMD or ARM. If you see "event not found" errors, run `perf list` to
+> see what your CPU exposes and update the `EVENTS` variable in `run-perf.sh` accordingly.
+> `cycles`, `instructions`, `branches`, `branch-misses`, and `page-faults` are generic and
+> work everywhere.
+
 Remember to minimize system load while working through these exercises. If you
 see a deviation in your datapoint, stop and confirm your system assumptions before
 continuing.
