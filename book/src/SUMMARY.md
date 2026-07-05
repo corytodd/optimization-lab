@@ -9,3 +9,5 @@
 ---
 
 [Reference](reference.md)
+
+[Appendix: Does the CPU Governor Actually Matter?](appendix-governor.md)
