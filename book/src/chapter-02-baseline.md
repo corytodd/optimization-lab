@@ -214,8 +214,8 @@ exactly where cycles are going inside the function.
 ## Progress Chart
 
 `perf stat` runs the command once with no warmup, so its wall-clock time is noisy. Use
-`hyperfine` instead: it does warmup runs and reports mean, stddev, and min across many
-iterations, making small improvements reliably detectable. Export to JSON so `plot-results.py`
+`hyperfine` instead because it does warmup runs and reports mean, stddev, and min across many
+iterations. This makes it possible to reason about small improvements. Export to JSON so `plot-results.py`
 can pick it up automatically. Name each file `<label>_hyperfine.json`:
 
 ```bash
@@ -229,11 +229,8 @@ python3 tools/plot-results.py --sol 106.3 --results results/ --out results/chart
 
 ## Summary
 
-We have established our speed-of-light (106 ms on this system) and our scalar baseline (2153 ms),
-a gap of roughly 20x. System-specifics like P-core affinity, CPU governor, and compiler version
-are captured in the metadata header written by `run-perf.sh`, so every result is tied to a known
-environment and regressions are traceable to a specific change.
+We have established our speed-of-light and our scalar baseline. On this system we see a gap of roughly 20x.System-specifics like P-core affinity, CPU governor, and compiler version are captured in the metadata header written by `run-perf.sh`, so every result is tied to a known environment and regressions are traceable to a
+specific change.
 
 From here, each optimization attempt follows the same loop: implement, confirm with `hyperfine`,
-profile with `perf stat` and `perf annotate`, add to the progress chart. The 106 ms floor is the
-target; anything that reaches it has extracted everything the hardware can give.
+profile with `perf stat` and `perf annotate`, add to the progress chart.
