@@ -18,7 +18,8 @@ For any character `c`:
 - Otherwise: `rot13(c) = c`
 
 It is a Caesar cipher with shift 13. The key property that makes it self-inverse is that
-`((x + 13) % 26 + 13) % 26 == x`, so encoding and decoding are the same operation.
+`((x + 13) % 26 + 13) % 26 == x`, so encoding and decoding are the same operation. For simplicity,
+we are using ASCII characters, explicitly not Unicode.
 
 
 ## What is Optimization

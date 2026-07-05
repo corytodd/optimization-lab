@@ -1,0 +1,44 @@
+## environment
+date:     2026-07-05T19:02:38Z
+os:       Linux 7.1.2-3-cachyos
+cpu:      12th Gen Intel(R) Core(TM) i7-1255U
+cores:    0-3
+compiler: clang version 22.1.6
+governor: performance
+command:  ./build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut
+
+# started on Sun Jul  5 12:02:37 2026
+
+
+ Performance counter stats for './build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut':
+
+     <not counted>      cpu_atom/cycles/u                                                       (0.00%)
+     1,138,221,410      cpu_core/cycles/u                                                       (81.65%)
+     <not counted>      cpu_atom/instructions/u                                                 (0.00%)
+     6,004,558,237      cpu_core/instructions/u                                                 (90.83%)
+         3,249,489      cpu_core/mem_load_retired.l1_miss/u                                        (90.94%)
+            11,036      cpu_core/mem_load_retired.l2_miss/u                                        (90.94%)
+            10,397      cpu_core/mem_load_retired.l3_miss/u                                        (90.93%)
+     <not counted>      cpu_atom/dtlb-load-misses/u                                             (0.00%)
+             2,577      cpu_core/dtlb-load-misses/u                                             (90.94%)
+     <not counted>      cpu_atom/dtlb-loads/u                                                   (0.00%)
+     2,007,116,244      cpu_core/dtlb-loads/u                                                   (36.26%)
+           244,224      page-faults:u                                                         
+     <not counted>      cpu_atom/branches/u                                                     (0.00%)
+     1,004,003,575      cpu_core/branches/u                                                     (45.32%)
+     <not counted>      cpu_atom/branch-misses/u                                                (0.00%)
+                16      cpu_core/branch-misses/u                                                (54.38%)
+     <not counted>      cpu_atom/uops_issued.any/u                                              (0.00%)
+     5,251,564,143      cpu_core/uops_issued.any/u                                              (63.45%)
+     5,137,744,684      cpu_core/uops_retired.slots/u                                           (72.51%)
+   <not supported>      cpu_atom/stalled-cycles-frontend/u                                      
+   <not supported>      cpu_core/stalled-cycles-frontend/u                                      
+   <not supported>      cpu_atom/stalled-cycles-backend/u                                      
+   <not supported>      cpu_core/stalled-cycles-backend/u                                      
+
+       0.883059284 seconds time elapsed
+
+       0.275790000 seconds user
+       0.600225000 seconds sys
+
+
