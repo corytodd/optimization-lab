@@ -8,6 +8,7 @@
 const struct rot13_impl g_rot13_impls[] = {
     {"scalar", rot13_scalar},
     {"lut",    rot13_lut   },
+    {"simd",    rot13_simd   },
     {NULL, NULL},
 };
 
