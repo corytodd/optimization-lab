@@ -72,7 +72,7 @@ hyperfine --warmup 3 --export-json results/lut_hyperfine.json \
 python3 tools/plot-results.py --sol 106.3 --results results/ --out results/lut_chart.svg
 ```
 
-![Progress chart](images/lut_chart.svg)
+![Progress chart](../../results/lut_chart.svg)
 
 `hyperfine` confirms the counter-level improvement shows up in wall-clock time. Over 10
 warmed-up runs:

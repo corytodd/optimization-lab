@@ -225,7 +225,7 @@ hyperfine --warmup 3 --export-json results/new_optimization_hyperfine.json \
 python3 tools/plot-results.py --sol 106.3 --results results/ --out results/chart.svg
 ```
 
-![Baseline progress chart](images/baseline_chart.svg)
+![Baseline progress chart](../../results/baseline_chart.svg)
 
 ## Summary
 
