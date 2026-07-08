@@ -74,7 +74,7 @@ as the reference:
 | `cpu_core/dtlb-loads/u` | 1,682,340,562 | Total [TLB][tlb] lookups for loads. The miss rate `dtlb-load-misses / dtlb-loads` is effectively 0%, confirming translation is not a bottleneck. |
 | `page-faults:u` | 988 | User-space [page faults][pagefault] (soft faults on first touch). Proportional to the allocation size; not a per-iteration cost once the run is underway. |
 | `cpu_core/branches/u` | 62,383,554 | Conditional and unconditional branches executed. Roughly one branch per ~16 bytes of input, the inner loop condition that selects how to wrap the around the alphabet. |
-| `cpu_core/branch-misses/u` | 196 | Branches where the predictor was wrong. Near zero: the loop body is perfectly predictable. |
+| `cpu_core/branch-misses/u` | 196 | Branches where the predictor was wrong. Near zero because the loop body is perfectly predictable. |
 | `cpu_core/uops_issued.any/u` | 28,187,546,428 | Micro-ops issued by the front end. Should be close to `uops_retired.slots`; a large gap would indicate the back end is stalling. |
 | `cpu_core/uops_retired.slots/u` | 28,216,153,170 | Micro-ops that completed execution. Matches `uops_issued` closely, meaning almost no speculative work was discarded. |
 | `time elapsed` | 2.153 s | Wall-clock time including startup. Noisy for single-shot runs; use `hyperfine` for reliable timing. |
@@ -134,20 +134,20 @@ only worth making when mispredictions are frequent. Here they are not, so the br
 `cmov` version perform identically and the compiler will often generate `cmov` anyway at `-O3`.
 
 **We see ~28 billion micro-ops to process 1 GB of input**, this means roughly 28 instructions per byte.
-That is the real problem: the scalar loop does far too much work per byte with two range comparisons,
-two conditional branches, subtract, modulo, add. No amount of branch or pipeline tuning changes that
-ratio. The fix is to process more bytes per instruction or execute less instructions.
+That is a great place to scrutinizing. The scalar loop does far too much work per byte with two range
+comparisons, two conditional branches, subtract, modulo, add. No amount of branch or pipeline tuning
+changes that ratio. The fix is to process more bytes per instruction or execute less instructions.
 
 **We see negligible cache misses (1,200 L3 misses across 1 GB)**, so this means the hardware
 prefetcher is keeping up with the sequential scan. A standard prescription for high miss counts
 is to add software prefetch hints (`__builtin_prefetch`). That would be wasted effort here as
 the prefetcher is already doing its job. Verifying this before reaching for prefetch hints is
-exactly the point of reading the counters first.
+why we read the counters first.
 
 ```c
 for (int i = 0; i < (int)len; ++i)
 {
-    // no value in this case: the hardware prefetcher already handles sequential access.
+    // no value in this case because the hardware prefetcher already handles sequential access.
     // Adding this hint buys nothing and adds an instruction to every iteration
     __builtin_prefetch(&input[i + 64], 0, 0);
 
@@ -172,7 +172,7 @@ The binary writes its result to stdout, which adds cost that has nothing to do w
 algorithm. Redirecting to `/dev/null` eliminates the kernel-side `write()` cost, but the
 user-space work, buffering and copying the output into stdio's internal buffer, still runs
 and still appears in `perf stat`'s `:u` counters. To truly isolate the computation, suppress
-output entirely with `--bench`. The `:u` suffix on perf events is a useful reminder: it only
+output entirely with `--bench`. The `:u` suffix on perf events is a useful reminder. It only
 counts user-space work, so stdout overhead shows up there regardless of where the output goes.
 
 ### Our First Datapoint
@@ -183,7 +183,7 @@ the `:u` counter, none of which belong to the algorithm. With `--bench` those in
 disappear and the counter reflects only `rot13_process` and its supporting work.
 
 This is not an optimization, the binary is not faster at its actual job. It is measurement
-hygiene: making sure the numbers describe the thing being studied. Every benchmark involves
+hygiene. Making sure the numbers describe the thing being studied. Every benchmark involves
 this kind of scoping decision. Getting it wrong doesn't corrupt the result catastrophically,
 but it adds noise that can obscure real differences between implementations, especially when
 those differences are small.
@@ -208,7 +208,7 @@ To produce a flame graph and get per-instruction annotation:
 
 For a tight single-function loop like this, the flame graph will show `rot13_process` dominating
 unconditionally. The interesting question is _which instructions within it_ are slow. That is what
-`perf annotate --stdio` answers: it interleaves source lines with sampled instruction counts, showing
+`perf annotate --stdio` answers. It interleaves source lines with sampled instruction counts, showing
 exactly where cycles are going inside the function.
 
 ## Progress Chart
@@ -227,10 +227,20 @@ python3 tools/plot-results.py --sol 106.3 --results results/ --out results/chart
 
 ![Baseline progress chart](../../results/baseline_chart.svg)
 
+This is a good time for a refresher on differnt types of "time" For our purposes, we care
+about total time, that's the wall-clock execution time of the algorithm from program start to end.
+This is composed of two time slices: user time, that's the code we directly control, and system
+time, that's kernel code that we indirectly control. Our optimization process will address both
+slices to treat the overall execution time.
+
 ## Summary
 
-We have established our speed-of-light and our scalar baseline. On this system we see a gap of roughly 20x.System-specifics like P-core affinity, CPU governor, and compiler version are captured in the metadata header written by `run-perf.sh`, so every result is tied to a known environment and regressions are traceable to a
-specific change.
+We have established our speed-of-light and our scalar baseline. On this system we see a gap of
+roughly 20x.System-specifics like P-core affinity, CPU governor, and compiler version are captured
+in the metadata header written by `run-perf.sh`, so every result is tied to a known environment
+and regressions are traceable to a specific change.
 
-From here, each optimization attempt follows the same loop: implement, confirm with `hyperfine`,
-profile with `perf stat` and `perf annotate`, add to the progress chart.
+From here, each optimization attempt follows the same loop. 
+
+@TODO chart here to show the cycle?
+Implement, confirm with `hyperfine`, profile with `perf stat` and `perf annotate`, add to the progress chart.

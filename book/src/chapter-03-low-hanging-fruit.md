@@ -35,7 +35,7 @@ for byte in 0..255:
         table[byte] = byte
 ```
 
-The runtime cost of the branches and modulo is paid exactly once, at table-generation
+The runtime cost of the branches and modulo is paid only once, at table-generation
 time, instead of once per input byte. See [rot13_table.c](../../src/rot13_table.c) for
 the generated table and [rot13_lut.c](../../src/rot13_lut.c) for the lookup itself.
 
