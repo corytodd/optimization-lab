@@ -61,7 +61,7 @@ in_range(c, lower, upper) <=> (uint8_t)(c - lower) <= (uint8_t)(upper - lower)
 is small and positive. If `c` is below `lower`, the subtraction wraps to a large value close to 256.
 Either way, one unsigned comparison against `upper - lower` now answers a two-sided bounds check.
 There is no unsigned `<=` instruction for bytes in AVX2, only `==` and signed `>`, so the last
-step fakes it with `min` and equality: `min_epu8(delta, range) == delta` is true only when
+step fakes it with `min` and equality. `min_epu8(delta, range) == delta` is true only when
 `delta <= range`, since the min can only equal `delta` when `delta` was already the smaller value.
 
 `'a'..'m'`, `'n'..'z'`, `'A'..'M'`, and `'N'..'Z'` are each 13 letters wide, so
@@ -186,7 +186,7 @@ Over 10 warmed-up runs:
 
 User time drops another 2.5x from the LUT build (17.5x from baseline), consistent with the
 instruction and cycle counts above. System time drops too, in absolute terms (0.587 s -> 0.321 s),
-but keeps claiming a larger share of the total: 72% of wall-clock time now, up from the LUT's 66%
+but keeps claiming a larger share of the total. 72% of wall-clock time now, up from the LUT's 66%
 and the baseline's 14%. The algorithm has gotten fast enough that the surrounding cost of getting
 bytes into and out of the process is now the largest single line item, not the transform itself.
 
