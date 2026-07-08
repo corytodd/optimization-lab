@@ -119,7 +119,11 @@ struct.
 ## Results
 
 ```bash
-./tools/run-perf.sh -o results/simd_perf.txt -- ./build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl simd
+./tools/run-perf.sh -o \
+  results/simd_perf.txt -- \
+  ./build/cmd/rot13-cli \
+  -f data/data_1GB.txt \
+  --bench --impl simd
 ```
 
 | Field | Baseline | LUT | SIMD | LUT -> SIMD |
