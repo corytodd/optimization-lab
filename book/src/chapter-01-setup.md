@@ -49,7 +49,7 @@ cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
 ```bash
 # Corresponds to core0-coreN where N is nproc
-sys/devices/system/cpu/cpu*/cpufreq/base_frequency
+cat /sys/devices/system/cpu/cpu*/cpufreq/base_frequency
 1700000
 1700000
 1700000

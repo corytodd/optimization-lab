@@ -12,3 +12,5 @@
 [Reference](reference.md)
 
 [Appendix: Does the CPU Governor Actually Matter?](appendix-governor.md)
+
+[Appendix: What are P and E Cores?](appendix-p-e-cores.md)
