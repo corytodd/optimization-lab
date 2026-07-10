@@ -26,6 +26,7 @@ struct args
     const char* impl;
     bool bench;
     bool use_mmap;
+    bool use_madvise;
 };
 
 // NOLINTBEGIN(misc-include-cleaner)
@@ -34,6 +35,7 @@ static const struct option LONG_OPTIONS[] = {
     {"impl", required_argument, NULL, 'i'},
     {"bench", no_argument, NULL, 'b'},
     {"mmap", no_argument, NULL, 'm'},
+    {"madvise", no_argument, NULL, 'a'},
     {NULL, 0, NULL, 0},
 };
 // NOLINTEND(misc-include-cleaner)
@@ -43,7 +45,7 @@ static struct args parse_args(int argc, char** argv)
     struct args result = {.impl = "scalar"};
     int opt;
     // NOLINTNEXTLINE(misc-include-cleaner)
-    while((opt = getopt_long(argc, argv, "f:i:bm", LONG_OPTIONS, NULL)) != -1)
+    while((opt = getopt_long(argc, argv, "f:i:bma", LONG_OPTIONS, NULL)) != -1)
     {
         switch(opt)
         {
@@ -58,6 +60,9 @@ static struct args parse_args(int argc, char** argv)
             break;
         case 'm':
             result.use_mmap = true;
+            break;
+        case 'a':
+            result.use_madvise = true;
             break;
         default:
             break;
@@ -111,7 +116,13 @@ static char* read_all(FILE* file, size_t* out_len)
 // Maps filepath read-only instead of copying it through fopen/fread, avoiding
 // a full-buffer copy for large inputs. The fd is closed immediately after the
 // mapping is established and the mapping stays valid until munmap.
-static void* mmap_file(const char* filepath, size_t* out_len)
+//
+// With use_madvise, hints that the mapping will be read once, sequentially,
+// start to finish. The default mmap readahead is conservative, so without
+// the hint a sequential scan stalls on minor page faults as it walks pages
+// it hasn't touched yet. MADV_SEQUENTIAL/MADV_WILLNEED push the kernel to
+// prefetch aggressively, matching (or beating) read()'s readahead behavior.
+static void* mmap_file(const char* filepath, bool use_madvise, size_t* out_len)
 {
     int fd = open(filepath, O_RDONLY); // NOLINT(misc-include-cleaner)
     if(fd < 0)
@@ -131,6 +142,12 @@ static void* mmap_file(const char* filepath, size_t* out_len)
     if(mapped == MAP_FAILED)
     {
         return NULL;
+    }
+
+    if(use_madvise)
+    {
+        (void) madvise(mapped, (size_t) info.st_size, MADV_SEQUENTIAL);
+        (void) madvise(mapped, (size_t) info.st_size, MADV_WILLNEED);
     }
 
     *out_len = (size_t) info.st_size;
@@ -155,13 +172,14 @@ static void release_input(struct input* inp)
     free(inp->buf);
 }
 
-static int acquire_input(int argc, char** argv, const char* filepath, bool use_mmap, struct input* out)
+static int acquire_input(int argc, char** argv, const char* filepath, bool use_mmap, bool use_madvise,
+                          struct input* out)
 {
     if(filepath)
     {
         if(use_mmap)
         {
-            out->mapped = mmap_file(filepath, &out->mapped_len);
+            out->mapped = mmap_file(filepath, use_madvise, &out->mapped_len);
             if(!out->mapped)
             {
                 (void) fprintf(stderr, "cannot mmap %s: %s\n", filepath, strerror(errno));
@@ -224,7 +242,7 @@ int main(int argc, char** argv)
     }
 
     struct input inp = {0};
-    if(acquire_input(argc, argv, args.filepath, args.use_mmap, &inp) != 0)
+    if(acquire_input(argc, argv, args.filepath, args.use_mmap, args.use_madvise, &inp) != 0)
     {
         return 1;
     }
