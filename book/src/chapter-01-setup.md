@@ -48,26 +48,31 @@ cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 ```
 
 ```bash
-# Corresponds to core0-coreN where N is nproc
-cat /sys/devices/system/cpu/cpu*/cpufreq/base_frequency
-1700000
-1700000
-1700000
-1700000 # End of P-cores
-1200000 # Start of E-cores
-1200000
-1200000
-1200000
-1200000
-1200000
-1200000
-1200000
+lscpu -e=CPU,CORE,MAXMHZ
+CPU CORE    MAXMHZ
+  0    0 4700.0000
+  1    0 4700.0000
+  2    1 4700.0000
+  3    1 4700.0000 # End of P-cores
+  4    2 3500.0000 # Start of E-cores
+  5    3 3500.0000
+  6    4 3500.0000
+  7    5 3500.0000
+  8    6 3500.0000
+  9    7 3500.0000
+ 10    8 3500.0000
+ 11    9 3500.0000
 ```
+
+Don't rely on globbing `/sys/devices/system/cpu/cpu*/...` and reading the results in order:
+the shell expands that glob lexically, so on any machine with 10+ CPUs the order comes out
+`cpu0, cpu1, cpu10, cpu11, cpu2, ...` instead of numeric order, silently mismatching CPU
+numbers to frequencies. `lscpu -e` reads the same topology but sorts by CPU number correctly.
 
 Both `run-perf.sh` and `flame.sh` pin the process to cores `0-3` via `taskset`. On this
 machine (i7-1255U) those are the two P-cores, which keeps the process off the E-cores and
 prevents the scheduler from migrating it mid-run. On a different machine the core numbering
-will differ; check `lscpu` and override with `TASKSET_CORES=<range>` if needed:
+will differ; check `lscpu -e=CPU,CORE,MAXMHZ` and override with `TASKSET_CORES=<range>` if needed:
 
 ```bash
 TASKSET_CORES=0-3 ./tools/run-perf.sh ...

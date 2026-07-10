@@ -13,33 +13,31 @@ Some cores are optimized for high performance and other are optimized for
 efficiency. Operating systems can choose the best core for the job for the
 purpose of balancing battery life and performance.
 
-In Chapter 1, the following CPU frequency table was shown.
+In Chapter 1, the following CPU topology table was shown.
 
 ```bash
-# Corresponds to core0-coreN where N is nproc
-cat /sys/devices/system/cpu/cpu*/cpufreq/base_frequency
-1700000
-1700000
-1700000
-1700000 # End of P-cores
-1200000 # Start of E-cores
-1200000
-1200000
-1200000
-1200000
-1200000
-1200000
-1200000
+lscpu -e=CPU,CORE,MAXMHZ
+CPU CORE    MAXMHZ
+  0    0 4700.0000
+  1    0 4700.0000
+  2    1 4700.0000
+  3    1 4700.0000 # End of P-cores
+  4    2 3500.0000 # Start of E-cores
+  5    3 3500.0000
+  6    4 3500.0000
+  7    5 3500.0000
+  8    6 3500.0000
+  9    7 3500.0000
+ 10    8 3500.0000
+ 11    9 3500.0000
 ```
 
-This tells us my CPU has 4 P cores with a minimum frequency of 1.7 GHz and 8 E
-cores with a minimum frquency of 1.2 GHz.
+This tells us my CPU has 4 P cores capable of 4.7 GHz and 8 E cores capable of
+3.5 GHz.
 
-```bash
-cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq | uniq 
-4700000
-3500000
-```
-
-Is a more honest telling of what the system is capable of. 4.7 GHz on P cores
-and 3.5 GHz on E cores.
+Prefer `lscpu -e` over reading `/sys/devices/system/cpu/cpu*/cpufreq/*` directly with a
+shell glob. The glob expands in lexical order, so once a machine has 10 or more CPUs the
+listing comes out `cpu0, cpu1, cpu10, cpu11, cpu2, ...` rather than numeric order. The
+"corresponds to core0-coreN" assumption silently breaks and you'll misattribute frequencies
+to the wrong CPU number. `lscpu -e` reports the same sysfs-backed topology but sorted
+numerically by CPU, so `CPU` lines up correctly with `CORE` and `MAXMHZ`.
