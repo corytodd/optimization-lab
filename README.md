@@ -4,7 +4,7 @@ A worked example of the low-level optimization workflow using `rot13` as the sub
 profiling with `perf`, establishing a speed-of-light floor, and iterating toward it.
 The algorithm stays simple so the tooling and methodology stay in focus.
 
-**Read the book:** [corytodd.github.io/optimization-demo](https://corytodd.github.io/optimization-demo)
+**Read the book:** [corytodd.github.io/optimization-lab](https://corytodd.github.io/optimization-lab)
 
 ## Quick Start
 
