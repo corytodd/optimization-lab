@@ -6,16 +6,16 @@ From our definition of optimization, we know that the theoretical limits must
 first be established. For applications, there are two types of work that can be
 optimized.
 
-- Instruction execution: The count and type of instructions executed. This includes
-  arithmetic and pipelining.
-- Data transfer: Parameters to intruction execution moving to and from storage.
+- Instruction execution: The count and type of instructions executed. This
+  includes arithmetic and pipelining.
+- Data transfer: Parameters to instruction execution moving to and from storage.
   This includes network access, local storage, system memory, and process memory.
 
-For `rot13`, the work is to process data using a transform function. It reads every
-input byte once and writes every output byte once. We know the input will come from a
-user which means data is at best sourced from RAM. This makes the application 
-memory-bandwidth-bound. No amount of CPU optimization can make it faster than the rate
-at which memory can supply and absorb data. 
+For `rot13`, the work is to process data using a transform function. It reads
+every input byte once and writes every output byte once. We know the input will
+come from a user which means data is at best sourced from RAM. This makes the
+application memory-bandwidth-bound. No amount of CPU optimization can make it
+faster than the rate at which memory can supply and absorb data.
 
 Measure the achievable read+write bandwidth on your machine:
 
@@ -29,14 +29,14 @@ read+write bandwidth:      20.2 GB/s
 rot13 speed-of-light:      106.3 ms  (1 GB input, 1 read + 1 write)
 ```
 
-106.3 ms is the floor. Any implementation that processes 1 GB slower than that is leaving
-performance on the table; any implementation that matches it has extracted everything the
-hardware can give.
+106.3 ms is the floor. Any implementation that processes 1 GB slower than that
+is leaving performance on the table; any implementation that matches it has
+extracted everything the hardware can give.
 
 ## Measure Once then Measure Again
 
 Before touching your application, measure the actual performance. There are many
-open-source tools available for making quick and accurate work of this task. 
+open-source tools available for making quick and accurate work of this task.
 Benchmarking is a notoriously difficult task on modern systems with complex,
 dynamic CPU and memory architectures. Use off-the-shelf tools to get the most
 accurate results before attempting to roll you own.
@@ -58,10 +58,15 @@ cmake --build build
 
 ### Reading the `perf stat` Output
 
-The metadata header written by `run-perf.sh` captures the environment -- OS, CPU, pinned cores,
-compiler, and governor -- so every result is reproducible and comparable. Below it, `perf stat`
-reports hardware performance counters. Here is what each field means using `baseline_perf.txt`
-as the reference:
+The metadata header written by `run-perf.sh` captures the environment so every
+result is reproducible and comparable.
+
+```
+OS CPU, pinned cores, compiler, governor
+```
+
+Below it, `perf stat` reports hardware performance counters. Here is what each
+field means using `baseline_perf.txt` as the reference:
 
 | Field                                 | Baseline value | What it measures                                                                                                                                                                   |
 | ------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -81,17 +86,19 @@ as the reference:
 | `user`                                | 1.835 s        | Time spent in user-space code. The bulk of elapsed time is algorithm and I/O buffering.                                                                                            |
 | `sys`                                 | 0.297 s        | Time spent in kernel code on behalf of the process. Dominated by `read()` syscalls bringing 1 GB off disk into page cache.                                                         |
 
-The `<not counted>` rows are `cpu_atom` events on the E-core PMU. Those cores are excluded by the
-`taskset 0-3` pinning, so their counters never increment. The `<not supported>` rows
-(`stalled-cycles-frontend/backend`) require additional MSR access that this kernel configuration
+The `<not counted>` rows are `cpu_atom` events on the E-core PMU. Those cores
+are excluded by the `taskset 0-3` pinning, so their counters never increment.
+The `<not supported>` rows (`stalled-cycles-frontend/backend`) require
+additional [model-specific register][msr] access that this kernel configuration
 does not expose.
 
 ## What the Baseline Tells Us
 
-**We see high IPC (`28.26B instructions / 7.49B cycles ~= 3.77`)**, this means the core's execution
-units are well-fed and retirement is smooth. Retirement is when the CPU commits a pipelined
-instruction the system. The alternative is a discard due to incorrect, speculative execution. Since
-our issued count is approximately equal to retired count, we have proof that the CPU is not wasting
+**We see high IPC (`28.26B instructions / 7.49B cycles ~= 3.77`)**, this means
+the core's execution units are well-fed and retirement is smooth. Retirement is
+when the CPU commits a pipelined instruction the system. The alternative is a
+discard due to incorrect, speculative execution. Since our issued count is
+approximately equal to retired count, we have proof that the CPU is not wasting
 cycles on mispredictions.
 
 ```
@@ -106,11 +113,13 @@ cycles on mispredictions.
             MOV R6, [bad] ; discarded, uops_issued but not uops_retired
 ```
 
-A common prescription is to reduce front-end pressure by merging micro-ops; for example, consolidating the two
-branch arms into a [cmov][cmov]. That does not help here because the predictor is already near-perfect
-(196 misses across 62 million branches), so there is no misprediction penalty to recover. High IPC with
-fast wall-clock time is healthy; high IPC with slow wall-clock time, as we see here, just means
-the CPU is efficiently executing a large amount of work.
+A common prescription is to reduce front-end pressure by merging micro-ops.
+For example, consolidating the two branch arms into a [cmov][cmov]. That does
+not help here because the predictor is already near-perfect with 196 misses
+across 62 million branches, so there is no misprediction penalty to recover.
+High IPC with fast wall-clock time is healthy. High IPC with slow wall-clock
+time, as we see here, just means the CPU is efficiently executing a large amount
+of work.
 
 ```c
 // two branch arms
@@ -129,20 +138,24 @@ int is_upper = (byte >= 'A' && byte <= 'Z');
 byte = is_lower ? lower : (is_upper ? upper : byte);
 ```
 
-The `cmov` form eliminates the branch entirely at the cost of always computing both arms. That trade is
-only worth making when mispredictions are frequent. Here they are not, so the branch version and the
-`cmov` version perform identically and the compiler will often generate `cmov` anyway at `-O3`.
+The `cmov` form eliminates the branch entirely at the cost of always computing
+both arms. That trade is only worth making when mispredictions are frequent.
+Here they are not, so the branch version and the `cmov` version perform
+identically and the compiler will often generate `cmov` anyway at `-O3`.
 
-**We see ~28 billion micro-ops to process 1 GB of input**, this means roughly 28 instructions per byte.
-That is a great place to scrutinizing. The scalar loop does far too much work per byte with two range
-comparisons, two conditional branches, subtract, modulo, add. No amount of branch or pipeline tuning
-changes that ratio. The fix is to process more bytes per instruction or execute less instructions.
+**We see ~28 billion micro-ops to process 1 GB of input**, this means roughly 28
+instructions per byte. This is a great place to scrutinizing. The scalar loop
+does far too much work per byte with two range comparisons, two conditional
+branches, subtract, modulo, add. No amount of branch or pipeline tuning changes
+that ratio. The fix is to process more bytes per instruction or execute less
+instructions.
 
-**We see negligible cache misses (1,200 L3 misses across 1 GB)**, so this means the hardware
-prefetcher is keeping up with the sequential scan. A standard prescription for high miss counts
-is to add software prefetch hints (`__builtin_prefetch`). That would be wasted effort here as
-the prefetcher is already doing its job. Verifying this before reaching for prefetch hints is
-why we read the counters first.
+**We see negligible cache misses (1,200 L3 misses across 1 GB)**, so this means
+the hardware prefetcher is keeping up with the sequential scan. A common
+prescription for high miss counts is to add software prefetch hints via
+`__builtin_prefetch`. That would be wasted effort here as the prefetcher is
+already doing its job. Verifying this before reaching for prefetch hints is why
+we read the counters first.
 
 ```c
 for (int i = 0; i < (int)len; ++i)
@@ -156,43 +169,49 @@ for (int i = 0; i < (int)len; ++i)
 }
 ```
 
-**We see `sys` time at 0.297 s (14% of elapsed)**, this means `read()` syscalls are contributing
-to the execution time. The file is being copied from the kernel's page cache into our `malloc`
-buffer. One prescription for this would be to replace `fread` with `mmap`. This eliminates the
-copy from the input file to the process input. This only works because we're reading from a file.
-If `stdin` were instead the source, this would be a less meaningful change.
+**We see `sys` time at 0.297 s (14% of elapsed)**, this means `read()` syscalls
+are contributing to the execution time. The file is being copied from the
+kernel's page cache into our `malloc` buffer. One prescription for this would be
+to replace `fread` with `mmap`. This eliminates the copy from the input file to
+the process input. This only works because we're reading from a file. If `stdin`
+were instead the source, this would be a less meaningful change.
 
 [tlb]: https://en.wikipedia.org/wiki/Translation_lookaside_buffer
 [cmov]: https://www.felixcloutier.com/x86/cmovcc
 [pagefault]: https://en.wikipedia.org/wiki/Page_fault
+[msr]: https://en.wikipedia.org/wiki/Model-specific_register
 
 ## Stdout and Measurement Noise
 
-The binary writes its result to stdout, which adds cost that has nothing to do with the
-algorithm. Redirecting to `/dev/null` eliminates the kernel-side `write()` cost, but the
-user-space work, buffering and copying the output into stdio's internal buffer, still runs
-and still appears in `perf stat`'s `:u` counters. To truly isolate the computation, suppress
-output entirely with `--bench`. The `:u` suffix on perf events is a useful reminder. It only
-counts user-space work, so stdout overhead shows up there regardless of where the output goes.
+The binary writes its result to stdout, which adds cost that has nothing to do
+with the algorithm. Redirecting to `/dev/null` eliminates the kernel-side
+`write()` cost, but the user-space work, buffering and copying the output into
+stdio's internal buffer, still runs and still appears in `perf stat`'s `:u`
+counters. To truly isolate the computation, suppress output entirely with
+`--bench`. The `:u` suffix on perf events is a useful reminder. It only counts
+user-space work, so stdout overhead shows up there regardless of where the
+output goes.
 
 ### Our First Datapoint
 
-Compare the instruction counts with and without `--bench`. Without it, `fputs` copies 1 GB
-through stdio's internal buffer, a user-space memcpy that adds millions of instructions to
-the `:u` counter, none of which belong to the algorithm. With `--bench` those instructions
-disappear and the counter reflects only `rot13_process` and its supporting work.
+Compare the instruction counts with and without `--bench`. Without it, `fputs`
+copies 1 GB through stdio's internal buffer, a user-space memcpy that adds
+millions of instructions to the `:u` counter, none of which belong to the
+algorithm. With `--bench` those instructions disappear and the counter reflects
+only `rot13_process` and its supporting work.
 
-This is not an optimization, the binary is not faster at its actual job. It is measurement
-hygiene. Making sure the numbers describe the thing being studied. Every benchmark involves
-this kind of scoping decision. Getting it wrong doesn't corrupt the result catastrophically,
-but it adds noise that can obscure real differences between implementations, especially when
-those differences are small.
+This is not an optimization, the binary is not performing its work any more
+efficiently. This is measurement hygiene. Making sure the numbers describe the
+thing being studied. Every benchmark involves this kind of scoping decision.
+Getting it wrong doesn't corrupt the result catastrophically, but it adds noise
+that can obscure real differences between implementations, especially when those
+differences are small.
 
 ## Flame Graph
 
-A flame graph is a visualization of sampled call stacks where each box is a function and its
-width is proportional to how often it appeared in the samples, making hot code paths easy to
-spot at a glance.
+A flame graph is a visualization of sampled call stacks where each box is a
+function and its width is proportional to how often it appeared in the samples,
+making hot code paths easy to spot at a glance.
 
 To produce a flame graph and get per-instruction annotation:
 
@@ -206,17 +225,19 @@ To produce a flame graph and get per-instruction annotation:
 
 ![Baseline flame graph](../../results/baseline_flame.svg)
 
-For a tight single-function loop like this, the flame graph will show `rot13_process` dominating
-unconditionally. The interesting question is _which instructions within it_ are slow. That is what
-`perf annotate --stdio` answers. It interleaves source lines with sampled instruction counts, showing
-exactly where cycles are going inside the function.
+For a tight single-function loop like this, the flame graph will show
+`rot13_process` dominating unconditionally. The interesting question is _which
+instructions within it_ are slow. This is what `perf annotate --stdio` answers.
+It interleaves source lines with sampled instruction counts, showing where
+cycles are going inside the function.
 
 ## Progress Chart
 
-`perf stat` runs the command once with no warmup, so its wall-clock time is noisy. Use
-`hyperfine` instead because it does warmup runs and reports mean, stddev, and min across many
-iterations. This makes it possible to reason about small improvements. Export to JSON so `plot-results.py`
-can pick it up automatically. Name each file `<label>_hyperfine.json`:
+`perf stat` runs the command once with no warmup, so its wall-clock time is
+noisy. Use `hyperfine` instead because it does warmup runs and reports mean,
+stddev, and min across many iterations. This makes it possible to reason about
+small improvements. Export to JSON so `plot-results.py` can pick it up
+automatically. Name each file `<label>_hyperfine.json`:
 
 ```bash
 hyperfine --warmup 3 --export-json results/new_optimization_hyperfine.json \
@@ -227,20 +248,19 @@ python3 tools/plot-results.py --sol 106.3 --results results/ --out results/chart
 
 ![Baseline progress chart](../../results/baseline_chart.svg)
 
-This is a good time for a refresher on differnt types of "time" For our purposes, we care
-about total time, that's the wall-clock execution time of the algorithm from program start to end.
-This is composed of two time slices: user time, that's the code we directly control, and system
-time, that's kernel code that we indirectly control. Our optimization process will address both
-slices to treat the overall execution time.
+This is a good time for a refresher on different types of "time" For our
+purposes, we care about total time, that's the wall-clock execution time of the
+algorithm from program start to end. This is composed of two time slices: user
+time, that's the code we directly control, and system time, that's kernel code
+that we indirectly control. Our optimization process will address both slices to
+treat the overall execution time.
 
 ## Summary
 
-We have established our speed-of-light and our scalar baseline. On this system we see a gap of
-roughly 20x.System-specifics like P-core affinity, CPU governor, and compiler version are captured
-in the metadata header written by `run-perf.sh`, so every result is tied to a known environment
-and regressions are traceable to a specific change.
+We have established our speed-of-light and our scalar baseline. On this system
+we see a gap of roughly 20x. System-specifics like P-core affinity, CPU
+governor, and compiler version are captured in the metadata header written by
+`run-perf.sh`, so every result is tied to a known environment and regressions
+are traceable to a specific change.
 
-From here, each optimization attempt follows the same loop. 
-
-@TODO chart here to show the cycle?
-Implement, confirm with `hyperfine`, profile with `perf stat` and `perf annotate`, add to the progress chart.
+From here, each optimization attempt follows the same loop.
