@@ -1,8 +1,8 @@
 #!/bin/bash
 # Alternates the cpufreq governor in an A-B-B-A pattern and times the same
-# workload under each, to separate a genuine governor effect from ordinary
-# session-to-session noise.
-# Requires sudo to change the governor; restores the original governor on exit.
+# workload under each, to separate a governor effect from ordinary
+# session-to-session noise. This users hyperfine under the hood to manage
+# the actual benchmarking.
 #
 # Usage: ./tools/governor-experiment.sh [-- TARGET ARGS...]
 #   default target: ./build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut
