@@ -39,11 +39,11 @@ typedef struct
     __m256i minus13;
 } rot13_simd_consts_t;
 
-//   'a'..'m'        'n'..'z'         'A'..'M'        'N'..'Z'
+//   'a'..'m'        'A'..'M'         'n'..'z'        'N'..'Z'
 //  +---------+     +---------+     +---------+     +---------+
-//  | +13     |     | -13     |     | +13     |     | -13     |
+//  | +13     |     | +13     |     | -13     |     | -13     |
 //  +---------+     +---------+     +---------+     +---------+
-//   lower_am        lower_nz        upper_am        upper_nz
+//   lower_am        upper_am        lower_nz        upper_nz
 //
 // chunk = [ b0 b1 b2 ... b31 ]  (32 lanes, sizeof(__m256i))
 // Every step below runs on all 32 lanes at once -- the pipeline is drawn
@@ -52,11 +52,11 @@ typedef struct
 //              |
 //   +----------+----------+----------+----------+
 //   |          |          |          |          |
-// -lower_a   -lower_n   -upper_a   -upper_n      (parallel subtracts)
+// -lower_a   -upper_a   -lower_n   -upper_n      (parallel subtracts)
 //   |          |          |          |
 // <=12?      <=12?      <=12?      <=12?         (min_epu8 == delta trick)
 //   |          |          |          |
-// in_lower_am in_lower_nz in_upper_am in_upper_nz (disjoint! only one byte will be 0xFF)
+// in_lower_am in_upper_am in_lower_nz in_upper_nz (disjoint! only one byte will be 0xFF)
 //    \___OR___/            \___OR___/
 //   add_mask               sub_mask
 //   (want +13)             (want -13)
