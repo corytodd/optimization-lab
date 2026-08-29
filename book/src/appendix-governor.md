@@ -35,6 +35,10 @@ noise, not a governor effect The `performance` and `powersave` samples
 interleave throughout the run and land on the same numbers regardless of
 position, which rules out drift as an explanation too.
 
+These results apply **only** to our system and experiment. This does not
+generalize to other applications. These results show that in our specific
+scenario, the core type does not matter.
+
 ## Takeaway
 
 A single `perf stat` or `hyperfine` capture reflects the whole machine's state

@@ -1,10 +1,9 @@
 # Appendix: What are P and E Cores?
 
-During the setup chapter, caution was advised to the reader to be aware
-of their CPU topology. Specifically, P and E cores happen to have a
-meaningful impact on performance, particularly when work migrates
-between them. Running the application on one type, then having the
-scheduler move the work to another can skew the results.
+During the setup chapter, caution was advised to be aware of CPU topology.
+Specifically, P and E cores happen to have a meaningful impact on performance,
+particularly when work migrates between them. Running the application on one
+type, then having the scheduler move the work to another can skew the results.
 
 So what are they?
 
@@ -35,9 +34,10 @@ CPU CORE    MAXMHZ
 This tells us my CPU has 4 P cores capable of 4.7 GHz and 8 E cores capable of
 3.5 GHz.
 
-Prefer `lscpu -e` over reading `/sys/devices/system/cpu/cpu*/cpufreq/*` directly with a
-shell glob. The glob expands in lexical order, so once a machine has 10 or more CPUs the
-listing comes out `cpu0, cpu1, cpu10, cpu11, cpu2, ...` rather than numeric order. The
-"corresponds to core0-coreN" assumption silently breaks and you'll misattribute frequencies
-to the wrong CPU number. `lscpu -e` reports the same sysfs-backed topology but sorted
-numerically by CPU, so `CPU` lines up correctly with `CORE` and `MAXMHZ`.
+Prefer `lscpu -e` over reading `/sys/devices/system/cpu/cpu*/cpufreq/*` directly
+with a shell glob. The glob expands in lexical order, so once a machine has 10
+or more CPUs the listing comes out `cpu0, cpu1, cpu10, cpu11, cpu2, ...` rather
+than numeric order. The "corresponds to core0-coreN" assumption silently breaks
+and you'll misattribute frequencies to the wrong CPU number. `lscpu -e` reports
+the same sysfs-backed topology but sorted numerically by CPU, so `CPU` lines up
+correctly with `CORE` and `MAXMHZ`.
