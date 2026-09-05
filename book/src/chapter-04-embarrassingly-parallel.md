@@ -204,7 +204,7 @@ hyperfine --warmup 3 --export-json results/simd_hyperfine.json \
 python3 tools/plot-results.py --sol 106.3 --results results/ --out results/simd_chart.svg
 ```
 
-![Progress chart](../../results/simd_chart.svg)
+![Progress chart](./results/simd_chart.svg)
 
 Over 10 warmed-up runs:
 

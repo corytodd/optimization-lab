@@ -22,7 +22,7 @@ time and ignore the governor label.
 
 ## Results
 
-Four samples per governor (see [`results/governor_experiment.csv`](../../results/governor_experiment.csv)):
+Four samples per governor (see [`results/governor_experiment.csv`](./results/governor_experiment.csv)):
 
 | Governor      | mean (avg) | mean (stdev) | user (avg) | system (avg) |
 | ------------- | ---------- | ------------ | ---------- | ------------ |

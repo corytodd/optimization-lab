@@ -223,7 +223,7 @@ To produce a flame graph and get per-instruction annotation:
 ```
 
 
-![Baseline flame graph](../../results/baseline_flame.svg)
+![Baseline flame graph](./results/baseline_flame.svg)
 
 For a tight single-function loop like this, the flame graph will show
 `rot13_process` dominating unconditionally. The interesting question is _which
@@ -246,7 +246,7 @@ hyperfine --warmup 3 --export-json results/new_optimization_hyperfine.json \
 python3 tools/plot-results.py --sol 106.3 --results results/ --out results/chart.svg
 ```
 
-![Baseline progress chart](../../results/baseline_chart.svg)
+![Baseline progress chart](./results/baseline_chart.svg)
 
 This is a good time for a refresher on different types of "time" For our
 purposes, we care about total time, that's the wall-clock execution time of the
