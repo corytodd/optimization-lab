@@ -3,7 +3,8 @@
 No byte can be in two of the four ranges at once. A byte is never simultaneously
 a lowercase and an uppercase letter, nor in both halves of the same case's
 alphabet. Because the four masks are mutually exclusive, they can be safely
-combined with a plain bitwise OR, no select or blend required:
+combined with a plain bitwise OR. The final shift result is the `Rot` offset
+to apply to each character.
 
 ```c
 __m256i add_mask = _mm256_or_si256(in_lower_am, in_upper_am);   // want +13
@@ -24,6 +25,7 @@ doubles as a per-lane select. Three ORs total:
 - one more to merge those two signed shift amounts, since a byte can only ever
   match one of the two
 
-See [rot13_simd.c](../../../src/rot13_simd.c) for the full listing, including the
-reasoning for why AVX2 (not SSE2, not AVX-512) is the right width for this
-problem, in a comment above the constants struct.
+See [rot13_simd.c][1] for the full listing, including the reasoning for why AVX2
+is the right width for this problem, in a comment above the constants struct.
+
+[1]: https://github.com/corytodd/optimization-lab/blob/665e99902f916c7b82bf2d78faf9a3361153ae4b/src/rot13_simd.c#L67
