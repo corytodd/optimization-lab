@@ -31,6 +31,17 @@ of four separate bounds.
   lower_am        lower_nz        upper_am        upper_nz
 ```
 
+| Char | Value | δ vs `'a'`<br>Char - 'a' | δ vs `'n'`<br>Char - 'n' | δ vs `'A'`<br>Char - 'A' | δ vs `'N'`<br>Char - 'N' | Rotation value   |
+|------|-------|--------------------------|--------------------------|--------------------------|--------------------------|------------------|
+| `H`  | 72    | 231                      | 218                      | **7**                    | 250                      | A..M → +13       |
+| `e`  | 101   | **4**                    | 247                      | 36                       | 23                       | a..m → +13       |
+| `y`  | 121   | 24                       | **11**                   | 56                       | 43                       | n..z → −13       |
+| `,`  | 44    | 203                      | 190                      | 235                      | 222                      | none → unchanged |
+| ` `  | 32    | 191                      | 178                      | 223                      | 210                      | none → unchanged |
+| `Z`  | 90    | 249                      | 236                      | 25                       | **12**                   | N..Z → −13       |
+| `q`  | 113   | 16                       | **3**                    | 48                       | 35                       | n..z → −13       |
+| `!`  | 33    | 192                      | 179                      | 224                      | 211                      | none → unchanged |
+
 Each byte lane gets checked against all four ranges independently, in parallel,
 across all 32 bytes of the chunk at once. There is no per-lane loop, one
 instruction covers all 32 lanes:
@@ -43,5 +54,5 @@ __m256i in_lower_am = _mm256_cmpeq_epi8(min_lower_am, delta_lower_am);
 
 `_mm256_cmpeq_epi8` doesn't return a single bit per lane. There is no packed
 boolean representation for byte compares in AVX2. Each lane gets filled with
-`0xFF` (match) or `0x00` (no match), a full byte-wide mask. This is what makes
-the next step possible.
+`0xFF` (match) or `0x00` (no match), a full byte-wide mask. The mask operation
+is explained in the next section.
