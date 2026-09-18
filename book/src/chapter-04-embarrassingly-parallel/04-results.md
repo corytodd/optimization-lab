@@ -32,27 +32,25 @@ per-byte instruction cost by roughly the same factor.
 **IPC drops to 1.77, below the LUT's 5.28.** This looks like a regression but it
 isn't. IPC measures instructions retired per cycle, not bytes processed per
 cycle. Each vector instruction here does 32x the work of a scalar one, so the
-front end simply doesn't need to issue as many of them to keep the execution
-units fed. Cycles fell by 2.7x in step with the 7.9x fall in instructions.
+front end doesn't need to issue as many of them to keep the execution units fed.
+Cycles fell by 2.7x in step with the 7.9x fall in instructions.
 That's the number that maps to wall-clock time, and it moved in the right
-direction. IPC stopped being a useful proxy for "is this fast" the moment the
-instruction mix changed shape. Istructions/byte and raw cycles are what to trust
-here.
+direction. Instructions/byte and raw cycles are what to trust here.
 
 **Branches fall 32.6x, from the LUT's one-per-byte loop condition to one-per-32-bytes.**
 The remaining branches are still almost perfectly predicted at 199 misses across
-30.8M, so this isn't recovering a misprediction penalty. This is running the
-loop 32x fewer times.
+30.8M, so we're observing the loop running 32x fewer times, not recovery in our
+mispredictions.
 
 **L2 and L3 misses rise sharply (19-20x) even though L1 misses fall.** The
 likely explanation is that the LUT build was slow enough that the hardware
 prefetcher had plenty of slack to stay ahead of consumption, keeping most
-accesses resolved in L1. The SIMD build consumes memory so much faster that the
-prefetcher can't stay as far ahead, so a larger share of accesses that would
-have been hidden in L1 now surface as L2/L3 traffic. This is a sign of
-approaching the memory-bound floor from Chapter 2, not a new problem to fix.
-Compute time shrank far enough that memory subsystem behavior that was
-previously invisible is now part of the picture.
+accesses resolved in L1. The SIMD build consumes memory so much faster that
+the prefetcher can't stay as far ahead, so a larger share of accesses that
+would have been hidden in L1 is now surfaced as L2/L3 traffic. This suggests
+that we're approaching the memory-bound floor from Chapter 2. Compute time
+shrank far enough that previously invisible memory subsystem behavior is now
+part of the picture.
 
 **Page faults return to baseline levels (987, vs the LUT run's 244,224).**
 Chapter 3 speculated that the LUT's larger `sys` time might trace to page-fault
