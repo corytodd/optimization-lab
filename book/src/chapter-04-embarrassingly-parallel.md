@@ -42,8 +42,11 @@ Loads and stores use the unaligned (`loadu`/`storeu`) forms because `input`/
 (alignment 32) because casting to the aligned type would claim an alignment
 guarantee the pointer doesn't actually have, which is what `-Wcast-align` warns
 about. `__m256i_u` matches the true alignment and the intrinsic's own declared
-parameter type. Pay attention to these warnings or else you run the risk of
-performance penalties, or worse, undefined behavior (UB).
+parameter type. 
+
+> [!WARNING]
+> Pay attention to these warnings or else you run the risk of
+> performance penalties, or worse, undefined behavior (UB).
 
 Any bytes left over once `len` isn't a multiple of 32 fall through to a scalar
 tail loop that reuses the Chapter 3 LUT.

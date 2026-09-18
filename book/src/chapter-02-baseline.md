@@ -200,8 +200,11 @@ millions of instructions to the `:u` counter, none of which belong to the
 algorithm. With `--bench` those instructions disappear and the counter reflects
 only `rot13_process` and its supporting work.
 
-This is not an optimization, the binary is not performing its work any more
-efficiently. This is measurement hygiene. Making sure the numbers describe the
+> [!TIP]
+> This is not an optimization, the binary is not performing its work any more
+> efficiently. This is measurement hygiene.
+
+Making sure the numbers describe the
 thing being studied. Every benchmark involves this kind of scoping decision.
 Getting it wrong doesn't corrupt the result catastrophically, but it adds noise
 that can obscure real differences between implementations, especially when those
