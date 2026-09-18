@@ -5,7 +5,7 @@ as a comparison. SIMD has no per-lane branch, so classification has to be
 arithmetic. The identity this build leans on:
 
 ```
-in_range(c, lower, upper) <=> (uint8_t)(c - lower) <= (uint8_t)(upper - lower)
+in_range(c, lower, upper) iff (uint8_t)(c - lower) <= (uint8_t)(upper - lower)
 ```
 
 `c` is the ordinal value of the character. `(uint8_t)(c - lower)` is unsigned

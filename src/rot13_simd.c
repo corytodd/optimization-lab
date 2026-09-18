@@ -14,8 +14,8 @@ extern const uint8_t g_rot13_table[256];
 
 // Vectorized ROT13: rather than a 256-entry LUT lookup per byte, classify
 // each byte with branchless unsigned range checks and add/subtract 13.
-//   in_range(c, lower, upper) <=> (uint8_t)(c - lower) <= (uint8_t)(upper - lower)
-//                             <=> min_epu8(c - lower, upper - lower) == (c - lower)
+//   in_range(c, lower, upper) iff (uint8_t)(c - lower) <= (uint8_t)(upper - lower)
+//                             iff min_epu8(c - lower, upper - lower) == (c - lower)
 // 'a'..'m' / 'A'..'M' shift forward by 13
 // 'n'..'z' / 'N'..'Z' shift back by 13
 // the four ranges are disjoint so the deltas can be OR-combined.
