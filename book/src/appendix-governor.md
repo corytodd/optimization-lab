@@ -46,6 +46,6 @@ at that moment, not just the code being measured. `governor: <value>` is
 captured in every `run-perf.sh` output for this reason. Leave yourself enough
 breadcrumbs so you are comfortable trusting your data throughout the process.
 
-When a result looks surprising, resist the urge to rationalize it away. The time
-spent designing an experiment, collecting data, and analyzing the results will
-make you a better engineer.
+When a result looks surprising, resist the urge to rationalize it away. Putting
+time into experimental design, collection, and analysis helps us build better
+systems together.
