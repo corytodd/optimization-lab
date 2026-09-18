@@ -11,3 +11,4 @@ build-dir = "html"
 default-theme = "light"
 preferred-dark-theme = "navy"
 mathjax-support = true
+git-repository-url = "https://github.com/corytodd/optimization-lab/tree/main/book"
