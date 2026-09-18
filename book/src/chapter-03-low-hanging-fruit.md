@@ -10,7 +10,7 @@ the first place. That comes in two forms:
 
 Both reduce total instruction count.
 
-Writing a look up table (LUT) is significantly easier to implement that SIMD.
+Writing a look up table (LUT) is significantly easier to implement than SIMD.
 The trade off with a LUT is the extra resource consumption. That data has to
 live _somewhere_ and that means a larger binary size and probably more RAM
 usage. Since we're not optimizing for size or resources, this is a fair tradeoff.

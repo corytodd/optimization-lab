@@ -39,7 +39,7 @@ Check your power profile and take note of your CPU topology before proceeding.
 Both of these significantly affect application performance. Running in
 `performance` mode is generally what you want but whatever you choose, be
 consistent. For CPU topology, write down the cores with the high frequency so
-you can pin work to this cores.
+you can pin work to these cores.
 
 ```bash
  cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor

@@ -39,7 +39,7 @@ Before touching your application, measure the actual performance. There are many
 open-source tools available for making quick and accurate work of this task.
 Benchmarking is a notoriously difficult task on modern systems with complex,
 dynamic CPU and memory architectures. Use off-the-shelf tools to get the most
-accurate results before attempting to roll you own.
+accurate results before attempting to roll your own.
 
 Remember to minimize system load while working through these exercises.
 
@@ -144,7 +144,7 @@ Here they are not, so the branch version and the `cmov` version perform
 identically and the compiler will often generate `cmov` anyway at `-O3`.
 
 **We see ~28 billion micro-ops to process 1 GB of input**, this means roughly 28
-instructions per byte. This is a great place to scrutinizing. The scalar loop
+instructions per byte. This is a great place to start scrutinizing. The scalar loop
 does far too much work per byte with two range comparisons, two conditional
 branches, subtract, modulo, add. No amount of branch or pipeline tuning changes
 that ratio. The fix is to process more bytes per instruction or execute less
