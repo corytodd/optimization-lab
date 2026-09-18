@@ -28,11 +28,24 @@ instruction, the same cycle. Where the scalar and LUT builds spend one loop
 iteration per byte, the SIMD build spends one iteration per 32 bytes:
 
 ```c
-for(; (pos + sizeof(__m256i)) <= len; pos += sizeof(__m256i))
+#include <immintrin.h>
+
+void demo_simd(const uint8_t* input, size_t len, uint8_t* output)
 {
-    __m256i chunk = _mm256_loadu_si256((const __m256i_u*) (input + pos));
-    __m256i result = rot13_shift_chunk(chunk, &consts);
-    _mm256_storeu_si256((__m256i_u*) (output + pos), result);
+    // Each byte is set 12
+    const __m256i bias = _mm256_set1_epi8(12);
+
+    for(size_t pos=0; (pos + sizeof(__m256i)) <= len; pos += sizeof(__m256i))
+    {
+        // Load 32 bytes into chunk from input
+        __m256i chunk = _mm256_loadu_si256((const __m256i_u*) (input + pos));
+
+        // Subtract bias from this chunk with modulo 256
+        __m256i bias_removed = _mm256_sub_epi8(chunk, bias);
+
+        // Write result back to output
+        _mm256_storeu_si256((__m256i_u*) (output + pos), result);
+    }
 }
 ```
 
