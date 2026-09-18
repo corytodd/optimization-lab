@@ -56,6 +56,13 @@ cmake --build build
 ./tools/run-perf.sh -o results/baseline_perf.txt -- ./build/cmd/rot13-cli -f data/data_1GB.txt --bench
 ```
 
+
+> [!NOTE]
+> If you see "event not found" errors, run `perf list` to see what your CPU exposes and update the
+> `EVENTS` variable in `run-perf.sh` accordingly. `perf` uses CPU-specific hardware counters. 
+> Some events in `run-perf.sh` target Intel's PMU will not exist verbatim on other other processors.
+
+
 ### Reading the `perf stat` Output
 
 The metadata header written by `run-perf.sh` captures the environment so every
