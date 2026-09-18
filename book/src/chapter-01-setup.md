@@ -2,6 +2,7 @@
 
 ## Tools
 
+- **This Repo** https://github.com/corytodd/optimization-lab
 - **clang** 22.1.6
   * LLVM toolchain preferred; GCC works but SIMD intrinsics may differ
 - **cmake** 4.3.4
