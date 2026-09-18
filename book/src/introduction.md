@@ -32,11 +32,11 @@ piecewise function:
 R(c) = \begin{cases} B_c + \Big(\big(\text{ord}(c) - B_c + 13\big) \bmod 26\Big), & \text{if } c \text{ is an alphabetic character} \\\\ c, & \text{otherwise} \end{cases}
 \\]
 
-Where the base offset \\(B_c \in \{\text{ord('a')}, \text{ord('A')}\}\\) is a
+Where the base offset \\(B_c \in \{\texttt{ord(′a′)}, \texttt{ord(′A′)}\}\\) is a
 constant determined by the case of the character:
 
 \\[
-B_c = \begin{cases} \text{ord('a')}, & \text{if } c \text{ is lowercase} \\\\ \text{ord('A')}, & \text{if } c \text{ is uppercase} \end{cases}
+B_c = \begin{cases} \texttt{ord(′a′)}, & \text{if } c \text{ is lowercase} \\\\ \texttt{ord(′A′)}, & \text{if } c \text{ is uppercase} \end{cases}
 \\]
 
 
