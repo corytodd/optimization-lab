@@ -10,7 +10,11 @@
     - [Flame Graph](chapter-02-baseline/05-flame-graph.md)
     - [Progress Chart and Summary](chapter-02-baseline/06-progress-and-summary.md)
 - [Low Hanging Fruit](chapter-03-low-hanging-fruit.md)
-- [Embarrassingly Parallel](chapter-04-embarrassingly-parallel.md)
+- [Embarrassingly Parallel](chapter-04-embarrassingly-parallel/01-one-instruction-32-bytes.md)
+    - [Branchless Range Classification](chapter-04-embarrassingly-parallel/02-branchless-range-classification.md)
+    - [OR-Combining Disjoint Ranges](chapter-04-embarrassingly-parallel/03-or-combining-disjoint-ranges.md)
+    - [Results](chapter-04-embarrassingly-parallel/04-results.md)
+    - [Progress Chart and Summary](chapter-04-embarrassingly-parallel/05-progress-and-summary.md)
 
 ---
 
