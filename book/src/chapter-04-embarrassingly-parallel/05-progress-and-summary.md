@@ -3,7 +3,7 @@
 ```bash
 hyperfine --warmup 3 --export-json results/simd_hyperfine.json \
   './build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl simd'
-python3 tools/plot-results.py --sol 106.3 --results results/ --out results/simd_chart.svg
+python3 tools/plot-results.py --sol 93.6 --results results/ --out results/simd_chart.svg
 ```
 
 ![Progress chart](../results/simd_chart.svg)
@@ -24,8 +24,8 @@ transform itself.
 
 ## Summary
 
-Against the 106.3 ms speed-of-light floor from Chapter 2, each step has closed
-most of the remaining gap:
+Against the speed-of-light floor from Chapter 2, each step has closed most of
+the remaining gap:
 
 - baseline at 23x the floor
 - LUT at 8.3x

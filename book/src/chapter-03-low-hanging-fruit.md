@@ -69,10 +69,11 @@ small improvements. Export to JSON so `plot-results.py` can pick it up
 automatically. Name each file `<label>_hyperfine.json`:
 
 ```bash
+./tools/run-perf.sh -o results/lut_perf.txt -- ./build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut
 hyperfine --warmup 3 --export-json results/lut_hyperfine.json \
-  './build/cmd/rot13-cli -f data/data_1GB.txt --bench'
+  './build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut'
 # --sol is speed-of-light from bw-probe.sh output
-python3 tools/plot-results.py --sol 106.3 --results results/ --out results/lut_chart.svg
+python3 tools/plot-results.py --sol 93.6 --results results/ --out results/lut_chart.svg
 ```
 
 ![Progress chart](./results/lut_chart.svg)
@@ -80,15 +81,14 @@ python3 tools/plot-results.py --sol 106.3 --results results/ --out results/lut_c
 `hyperfine` confirms the counter-level improvement shows up in wall-clock time.
 Over 10 warmed-up runs:
 
-- `baseline_hyperfine.json` reports a mean of 2.448 s
-    - user 2.079 s, system 0.347 s
-- `lut_hyperfine.json` reports a mean of 0.886 s
-    - user 0.295 s, system 0.587 s
+- `baseline_hyperfine.json` reports a mean of 966.6 ms
+    - user 0.675 s, system 0.292 s
+- `lut_hyperfine.json` reports a mean of 511.4 ms
+    - user 0.240 s, system 0.291 s
 
-This is a 2.8x reduction in total time, but a 7.0x reduction in user time alone,
-in line with the 6.6x drop in raw cycles. The wall-clock speedup lags the
+This is a ~47% reduction in total time with a 35% reduction in user time alone,
+in line with the ~61% drop in raw cycles. The wall-clock speedup lags the
 compute speedup because system time does not shrink with the algorithm, so it
 eats a larger share of an already-smaller runtime. This could be caused by
 kernel work such as page-fault handling for the ~1 GB output buffer. The LUT
-build is still well short of the 106.3 ms speed-of-light floor, so there is more
-to extract.
+build is still well short of the speed-of-light floor, so there is more to extract.

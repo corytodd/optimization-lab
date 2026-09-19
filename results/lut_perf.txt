@@ -1,44 +1,44 @@
 ## environment
-date:     2026-07-05T19:02:38Z
-os:       Linux 7.1.2-3-cachyos
+date:     2026-09-19T07:08:33Z
+os:       Linux 7.2.6-1-cachyos
 cpu:      12th Gen Intel(R) Core(TM) i7-1255U
 cores:    0-3
-compiler: clang version 22.1.6
+compiler: clang version 22.1.8
 governor: performance
 command:  ./build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut
 
-# started on Sun Jul  5 12:02:37 2026
+# started on Sat Sep 19 00:08:33 2026
 
 
  Performance counter stats for './build/cmd/rot13-cli -f data/data_1GB.txt --bench --impl lut':
 
      <not counted>      cpu_atom/cycles/u                                                       (0.00%)
-     1,138,221,410      cpu_core/cycles/u                                                       (81.65%)
+       985,784,224      cpu_core/cycles/u                                                       (81.82%)
      <not counted>      cpu_atom/instructions/u                                                 (0.00%)
-     6,004,558,237      cpu_core/instructions/u                                                 (90.83%)
-         3,249,489      cpu_core/mem_load_retired.l1_miss/u                                        (90.94%)
-            11,036      cpu_core/mem_load_retired.l2_miss/u                                        (90.94%)
-            10,397      cpu_core/mem_load_retired.l3_miss/u                                        (90.93%)
+     6,014,442,656      cpu_core/instructions/u                                                 (90.91%)
+         4,027,202      cpu_core/mem_load_retired.l1_miss/u                                        (90.91%)
+            26,045      cpu_core/mem_load_retired.l2_miss/u                                        (90.91%)
+            24,009      cpu_core/mem_load_retired.l3_miss/u                                        (90.91%)
      <not counted>      cpu_atom/dtlb-load-misses/u                                             (0.00%)
-             2,577      cpu_core/dtlb-load-misses/u                                             (90.94%)
+               409      cpu_core/dtlb-load-misses/u                                             (90.91%)
      <not counted>      cpu_atom/dtlb-loads/u                                                   (0.00%)
-     2,007,116,244      cpu_core/dtlb-loads/u                                                   (36.26%)
-           244,224      page-faults:u                                                         
+     2,026,666,062      cpu_core/dtlb-loads/u                                                   (36.37%)
+               988      page-faults:u                                                         
      <not counted>      cpu_atom/branches/u                                                     (0.00%)
-     1,004,003,575      cpu_core/branches/u                                                     (45.32%)
+     1,011,948,089      cpu_core/branches/u                                                     (45.46%)
      <not counted>      cpu_atom/branch-misses/u                                                (0.00%)
-                16      cpu_core/branch-misses/u                                                (54.38%)
+               201      cpu_core/branch-misses/u                                                (54.55%)
      <not counted>      cpu_atom/uops_issued.any/u                                              (0.00%)
-     5,251,564,143      cpu_core/uops_issued.any/u                                              (63.45%)
-     5,137,744,684      cpu_core/uops_retired.slots/u                                           (72.51%)
+     4,999,821,834      cpu_core/uops_issued.any/u                                              (63.65%)
+     4,998,750,933      cpu_core/uops_retired.slots/u                                           (72.73%)
    <not supported>      cpu_atom/stalled-cycles-frontend/u                                      
    <not supported>      cpu_core/stalled-cycles-frontend/u                                      
    <not supported>      cpu_atom/stalled-cycles-backend/u                                      
    <not supported>      cpu_core/stalled-cycles-backend/u                                      
 
-       0.883059284 seconds time elapsed
+       0.539293475 seconds time elapsed
 
-       0.275790000 seconds user
-       0.600225000 seconds sys
+       0.247953000 seconds user
+       0.284081000 seconds sys
 
 

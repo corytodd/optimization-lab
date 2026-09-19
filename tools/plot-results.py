@@ -5,7 +5,7 @@ Scans a results directory for *_hyperfine.json files produced by hyperfine --exp
 extracts the user/system time from each, and plots them stacked, sorted slowest-first.
 
 Usage:
-  python3 tools/plot-results.py --sol 106.3 --results results/ [--out results/chart.svg]
+  python3 tools/plot-results.py --sol 93.6 --results results/ [--out results/chart.svg]
 """
 
 import argparse

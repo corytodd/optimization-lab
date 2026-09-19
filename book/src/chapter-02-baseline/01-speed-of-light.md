@@ -21,14 +21,17 @@ Measure the achievable read+write bandwidth on your machine:
 
 ```bash
 ./tools/bw-probe.sh
+memcpy bandwidth:       11.5 GB/s copied  (22.9 GB/s read+write)
+rot13 speed-of-light:   93.6 ms  (1024 MiB input)
 ```
 
+93.6 ms is the floor. `rot13` must read and write 2GB in total by
+1GB read + 1GB write. The throughput is 22.9 GB/S so the math becomes:
+
 ```
-best memcpy 1 GB:          0.106 s
-read+write bandwidth:      20.2 GB/s
-rot13 speed-of-light:      106.3 ms  (1 GB input, 1 read + 1 write)
+speed_of_light = 2GB / 22.9GB/s ~= 93.6 ms
 ```
 
-106.3 ms is the floor. Any implementation that processes 1 GB slower than that
-is leaving performance on the table; any implementation that matches it has
+Any implementation that processes 1 GB slower than this is leaving
+performance on the table; any implementation that matches it has
 extracted everything the hardware can give.
