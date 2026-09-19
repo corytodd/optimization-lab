@@ -12,11 +12,11 @@ Over 10 warmed-up runs:
 
 - `baseline_hyperfine.json`: mean 2.448 s (user 2.079 s, system 0.347 s)
 - `lut_hyperfine.json`: mean 0.886 s (user 0.295 s, system 0.587 s)
-- `simd_hyperfine.json`: mean 0.444 s (user 0.119 s, system 0.321 s)
+- `simd_hyperfine.json`: mean 0.408 s (user 0.107 s, system 0.301 s)
 
 User time drops another 2.5x from the LUT build (17.5x from baseline),
 consistent with the instruction and cycle counts above. System time drops too,
-in absolute terms (0.587 s -> 0.321 s), but keeps claiming a larger share of the
+in absolute terms (0.587 s -> 0.301 s), but keeps claiming a larger share of the
 total. 72% of wall-clock time now, up from the LUT's 66% and the baseline's 14%.
 The algorithm has gotten fast enough that the surrounding cost of getting bytes
 into and out of the process is now the largest single line item, not the
