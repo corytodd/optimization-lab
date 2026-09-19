@@ -41,8 +41,8 @@ if [[ -n "${TITLE}" ]]; then
 fi
 
 perf script -i "${PERF_DATA}" \
-    | /usr/bin/stackcollapse-perf \
-    | /usr/bin/flamegraph "${FLAMEGRAPH_ARGS[@]}" > "${FLAME_SVG}"
+    | stackcollapse-perf \
+    | flamegraph "${FLAMEGRAPH_ARGS[@]}" > "${FLAME_SVG}"
 
 echo "flame graph: ${FLAME_SVG}"
 echo ""
