@@ -81,12 +81,12 @@ python3 tools/plot-results.py --sol 93.6 --results results/ --out results/lut_ch
 `hyperfine` confirms the counter-level improvement shows up in wall-clock time.
 Over 10 warmed-up runs:
 
-- `baseline_hyperfine.json` reports a mean of 966.6 ms
-    - user 0.675 s, system 0.292 s
+- `baseline_hyperfine.json` reports a mean of 963.3 ms
+    - user 0.672 s, system 0.290 s
 - `lut_hyperfine.json` reports a mean of 511.4 ms
     - user 0.240 s, system 0.291 s
 
-This is a ~47% reduction in total time with a 35% reduction in user time alone,
+This is a ~53% reduction in total time with a 35% reduction in user time alone,
 in line with the ~61% drop in raw cycles. The wall-clock speedup lags the
 compute speedup because system time does not shrink with the algorithm, so it
 eats a larger share of an already-smaller runtime. This could be caused by
