@@ -11,11 +11,12 @@
 - **perf** 7.0.10-1 hardware performance counter collection and call-graph sampling
 - **hyperfine** v1.20.0 wall-clock benchmarking with warmup and statistical summary
 - **stackcollapse-perf** + **flamegraph** from [Brendan Gregg's FlameGraph repo](https://github.com/brendangregg/FlameGraph), required by `flame.sh`
-    - ```
-       git clone https://github.com/brendangregg/FlameGraph
-       cd FlameGraph
-       sudo install -Tm 755 flamegraph.pl /usr/local/bin/flamegraph
-       sudo install -Tm 755 stackcollapse-perf.pl /usr/local/bin/stackcollapse-perf
+    ```
+      git clone https://github.com/brendangregg/FlameGraph
+      cd FlameGraph
+      sudo install -Tm 755 flamegraph.pl /usr/local/bin/flamegraph
+      sudo install -Tm 755 stackcollapse-perf.pl /usr/local/bin/stackcollapse-perf
+    ```
 
 ## Building
 
